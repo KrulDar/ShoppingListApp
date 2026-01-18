@@ -25,7 +25,7 @@ export function useAppData(session) {
                 if (profileError) throw profileError
 
                 // 2. Fetch Role
-                let { data: roleData, error: roleError } = await supabase
+                let { data: roleData } = await supabase
                     .from('user_roles')
                     .select('role')
                     .eq('user_id', user.id)

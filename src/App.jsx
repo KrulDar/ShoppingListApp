@@ -30,12 +30,7 @@ function App() {
 
   const { profile, role, lists, loading: dataLoading } = useAppData(session)
 
-  // Auto-select first list
-  useEffect(() => {
-    if (lists.length > 0 && !selectedListId) {
-      setSelectedListId(lists[0].id)
-    }
-  }, [lists, selectedListId])
+
 
   if (authLoading) {
     return <div style={{ display: 'grid', placeItems: 'center', height: '100vh' }}>Connect...</div>
@@ -49,11 +44,13 @@ function App() {
     return <div style={{ display: 'grid', placeItems: 'center', height: '100vh' }}>Loading data...</div>
   }
 
+  const activeListId = selectedListId || (lists.length > 0 ? lists[0].id : null)
+
   return (
     <div className="container">
       <Navbar
         lists={lists}
-        selectedListId={selectedListId}
+        selectedListId={activeListId}
         onSelectList={setSelectedListId}
         onManageLists={() => setShowListManager(true)}
         profile={profile}
@@ -69,8 +66,8 @@ function App() {
       )}
 
       <main>
-        {selectedListId ? (
-          <ShoppingList listId={selectedListId} />
+        {activeListId ? (
+          <ShoppingList listId={activeListId} />
         ) : (
           <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
             <p style={{ marginBottom: '1rem' }}>No lists found.</p>

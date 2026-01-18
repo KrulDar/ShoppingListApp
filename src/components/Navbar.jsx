@@ -22,7 +22,7 @@ export default function Navbar({ lists, selectedListId, onSelectList, onManageLi
 
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
                 <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary)' }}>
-                    🛒 PV
+                    🛒 Shopping List
                 </div>
             </div>
 
