@@ -44,17 +44,60 @@ export function useListItems(listId) {
 
         fetchItems()
 
+        // Real-time subscription for items
         const itemSub = supabase
-            .channel('items-changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'items', filter: `list_id=eq.${listId}` }, () => {
-                fetchItems(true)
+            .channel(`items-${listId}`)
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'items',
+                filter: `list_id=eq.${listId}`
+            }, (payload) => {
+                if (isMounted) {
+                    setItems(prev => [payload.new, ...prev])
+                }
+            })
+            .on('postgres_changes', {
+                event: 'UPDATE',
+                schema: 'public',
+                table: 'items',
+                filter: `list_id=eq.${listId}`
+            }, (payload) => {
+                if (isMounted) {
+                    setItems(prev => prev.map(item =>
+                        item.id === payload.new.id ? payload.new : item
+                    ))
+                }
+            })
+            .on('postgres_changes', {
+                event: 'DELETE',
+                schema: 'public',
+                table: 'items',
+                filter: `list_id=eq.${listId}`
+            }, (payload) => {
+                if (isMounted) {
+                    setItems(prev => prev.filter(item => item.id !== payload.old.id))
+                }
             })
             .subscribe()
 
+        // Real-time subscription for categories
         const catSub = supabase
             .channel('categories-changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => {
-                fetchItems(true)
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'categories'
+            }, async () => {
+                // Refetch categories when they change
+                const { data: catData } = await supabase
+                    .from('categories')
+                    .select('*')
+                    .order('sort_order', { ascending: true })
+
+                if (isMounted && catData) {
+                    setCategories(catData)
+                }
             })
             .subscribe()
 
