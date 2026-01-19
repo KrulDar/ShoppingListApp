@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from './lib/supabase'
 import Auth from './components/Auth'
@@ -13,6 +13,7 @@ function App() {
   const [authLoading, setAuthLoading] = useState(true)
   const [selectedListId, setSelectedListId] = useState(null)
   const [showListManager, setShowListManager] = useState(false)
+  const initializedLanguageSync = useRef(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -33,9 +34,10 @@ function App() {
   const { profile, role, lists, loading: dataLoading } = useAppData(session)
 
   useEffect(() => {
-    if (profile?.language && !i18n.initializedLanguageSync) {
+    if (profile?.language && !initializedLanguageSync.current) {
+      console.log('🔄 App: Syncing initial language from profile:', profile.language);
       i18n.changeLanguage(profile.language)
-      i18n.initializedLanguageSync = true
+      initializedLanguageSync.current = true
     }
   }, [profile, i18n])
 

@@ -40,6 +40,7 @@ export default function SettingsMenu({ profile, role, lists, selectedListId, onS
     }, [menuRef])
 
     const updateLanguage = async (lang) => {
+        console.log('⚙️ Settings: changing language to:', lang);
         i18n.changeLanguage(lang)
         const { error } = await supabase
             .from('profiles')
@@ -101,7 +102,7 @@ export default function SettingsMenu({ profile, role, lists, selectedListId, onS
                     <div>
                         <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>{t('settings.language')}</label>
                         <select
-                            value={i18n.resolvedLanguage || i18n.language || profile?.language || 'lt'}
+                            value={(i18n.language === 'nb' || i18n.language === 'nb-NO' || i18n.language === 'no') ? 'no' : i18n.language}
                             onChange={(e) => updateLanguage(e.target.value)}
                             style={{ width: '100%' }}
                         >
@@ -173,6 +174,9 @@ export default function SettingsMenu({ profile, role, lists, selectedListId, onS
                     >
                         {t('settings.signOut')}
                     </button>
+                    <div style={{ textAlign: 'center', fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', opacity: 0.7 }}>
+                        v1.2.0 (i18n-fix)
+                    </div>
                 </div>
             )}
         </div>

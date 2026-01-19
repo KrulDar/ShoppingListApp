@@ -332,6 +332,9 @@ const resources = {
     }
 };
 
+// Alias nb (Bokmål) to no (Norwegian) to ensure browser detection works
+resources.nb = resources.no;
+
 i18n
     .use(LanguageDetector)
     .use(initReactI18next)
