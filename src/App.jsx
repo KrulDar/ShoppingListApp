@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from './lib/supabase'
 import Auth from './components/Auth'
@@ -47,8 +47,12 @@ function App() {
 
   const { profile, role, lists, loading: dataLoading } = useAppData(session)
 
+  const handleSetupComplete = useCallback(() => {
+    setShowWelcome(true)
+  }, [])
+
   // Handle first-time user setup (create default list)
-  useFirstTimeSetup(profile, () => setShowWelcome(true))
+  useFirstTimeSetup(profile, handleSetupComplete)
 
   useEffect(() => {
     if (profile?.language && !initializedLanguageSync.current) {

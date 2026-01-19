@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { DEFAULT_CATEGORIES, DEFAULT_LIST_NAME, DEFAULT_ITEMS } from '../lib/defaultItems';
 
@@ -7,15 +7,19 @@ import { DEFAULT_CATEGORIES, DEFAULT_LIST_NAME, DEFAULT_ITEMS } from '../lib/def
  * Creates a default "Food" list with pre-populated items based on user's signup language
  */
 export function useFirstTimeSetup(profile, onComplete) {
+    const isSetupInProgress = useRef(false);
+
     useEffect(() => {
         if (!profile) return;
 
         const setupDefaultList = async () => {
             try {
-                // Check if user has already been set up
-                if (profile.initial_setup_completed) {
+                // Check if user has already been set up or setup is in progress
+                if (profile.initial_setup_completed || isSetupInProgress.current) {
                     return;
                 }
+
+                isSetupInProgress.current = true;
 
                 console.log('🎁 First time user detected, creating default list...');
 
