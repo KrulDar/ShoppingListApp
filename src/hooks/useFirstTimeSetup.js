@@ -52,7 +52,7 @@ export function useFirstTimeSetup(profile) {
                         .from('categories')
                         .insert({
                             name: categories[i],
-                            list_id: newList.id,
+                            owner_id: profile.id,
                             sort_order: i
                         })
                         .select()
@@ -60,6 +60,8 @@ export function useFirstTimeSetup(profile) {
 
                     if (!catError && category) {
                         categoryMap[i] = category.id;
+                    } else if (catError) {
+                        console.error(`Error creating category ${categories[i]}:`, catError);
                     }
                 }
 
